@@ -3,8 +3,7 @@
 # author：YFWang time:2022/3/2
 import requests
 import ddddocr
-
-
+import random
 
 def result_replace(p):
     p = p
@@ -22,8 +21,7 @@ def result_replace(p):
     p = p.replace("codeurl:", "标记来源地址：")
     return p
 
-
-url = "http://www.opene164.org.cn/mark/query/captcha.html?1646120488721"
+url = "https://www.opene164.org.cn/mark/query/captcha.html?1646120488721"
 
 payload = 'cookie=JSESSIONID%3DC08FD052705166A9405D505615AD83BA&Host=www.opene164.org.cn&Origin=http%3A%2F%2Fwww.opene164.org.cn&Referer=http%3A%2F%2Fwww.opene164.org.cn%2Fmark%2Findex.html&User-Agent=Mozilla%2F5.0%20(Macintosh%3B%20Intel%20Mac%20OS%20X%2010_12_6)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F73.0.3683.75%20Safari%2F537.36%0AX-Requested-With%3A%20XMLHttpRequest'
 headers = {
@@ -33,7 +31,26 @@ headers = {
 o = 1
 i = 0
 print("该工具有一定几率识别验证码失败，如果失败请多次尝试！退出请输入--quit")
+procxy = [
+    {'http':'HTTP://218.244.147.59:3128'
+    },
+    {'http':'HTTP://221.5.80.66:3128'
+    },
+    {'http':'HTTP://183.247.152.98:53281'
+    },
+    {'http':'HTTP://47.92.113.71:80'
+    },
+    {'http':'HTTP://183.247.152.98:53281'
+    },
+    {'http':'HTTP://221.5.80.66:3128'
+    },
+    {'http':'HTTP://218.7.171.91:3128'
+    }
+    ]
+
 while o >= 1:
+    http = random.choice(procxy)
+    print(http)
     phone = input("请输入你要查询标记的手机号:")
     if phone != "quit":
         # 获取响应图片内容
@@ -47,11 +64,13 @@ while o >= 1:
         ocr = ddddocr.DdddOcr()
         code = ocr.classification(content_captcha)
         # print(response.text)
-        # print(code)
+        print (code)
         # phone = 17114311449
-        url_phone = "http://www.opene164.org.cn/mark/data.do?phone=%s&captcha=%s" % (phone, code)
-        # print(url_phone)
-        r = requests.post(url_phone, headers=headers, data=payload, timeout=1)
+        print(phone)
+        url_phone = "https://www.opene164.org.cn/mark/data.do?phone=%s&captcha=%s" % (phone, code)
+        print(url_phone)
+        r = requests.post(url_phone, proxies=http, headers=headers, data=payload, timeout=1)
+        # r = requests.post(url_phone, headers=headers, data=payload, timeout=1)
         print(result_replace(r.text))
         # print(r.headers)
     else:
